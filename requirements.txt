@@ -1,0 +1,17 @@
+aiohttp==3.7.3
+async-timeout==3.0.1
+attrs==20.3.0
+certifi==2020.12.5
+chardet==3.0.4
+direnv==2020.12.3
+env-file==2020.12.3
+idna==2.10
+multidict==5.1.0
+pkg-resources==0.0.0
+pydantic==1.7.3
+requests==2.25.1
+tinvest==3.0.1
+typing-extensions==3.7.4.3
+urllib3==1.26.2
+values==2020.12.3
+yarl==1.6.3
