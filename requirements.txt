@@ -7,8 +7,9 @@ direnv==2020.12.3
 env-file==2020.12.3
 idna==2.10
 multidict==5.1.0
-pkg-resources==0.0.0
 pydantic==1.7.3
+python-dotenv==0.17.1
+pywin32==300
 requests==2.25.1
 tinvest==3.0.1
 typing-extensions==3.7.4.3
