@@ -50,7 +50,7 @@ class ExcelUtil:
     def __init__(self, file_path: str, portfolio: PortfolioUtil) -> None:
         self.portfolio: PortfolioUtil = portfolio
         self.file_path = file_path
-        self.papers_range = ['A2:A14']
+        self.papers_range = range(1, 99)
         self.excel = win32com.client.Dispatch("Excel.Application")
         self.papers_table = PapersTable()
 
@@ -58,13 +58,29 @@ class ExcelUtil:
         wb = self.excel.Workbooks.Open(self.file_path)
         sheet = wb.ActiveSheet
         try:
-            paper_prices = self.portfolio.get_papers_prices_in_rub().get('RUB')
+            paper_prices: dict = self.portfolio.get_papers_prices_in_rub().get('RUB')
+            currencies = self.portfolio.get_portfolio_currencies()
+            paper_prices = {**paper_prices, **currencies}
         except AttributeError:
             raise AttributeError("Cannot update papers statistics 'cause cannot receive papers price")
-        for r in sheet.Range(self.papers_range):
-            paper_name = r[0].value
-            cell_old_value = r[0].value
-            paper_prices.get(cell_old_value)
+        # for r in sheet.Range(f"A{self.papers_range[0]}:A{self.papers_range[1]}"):
+        i = 0
+        for i in self.papers_range:
+            paper_name = sheet.Cells(i, 1).value
+            if not paper_name:
+                break
+            paper_price = paper_prices.get(paper_name)
+            if paper_price is not None:
+                sheet.Cells(i, 2).value = round(paper_price)
+                del paper_prices[paper_name]
+        for name, price in paper_prices.items():
+            sheet.Cells(i, 1).value = name
+            sheet.Cells(i, 2).value = round(price)
+            i += 1
+        wb.Save()
+        wb.Close()
+        self.excel.Quit()
+
 
     def update_papers(self) -> None:
         currencies = self.portfolio.get_papers_prices()
