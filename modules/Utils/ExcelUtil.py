@@ -59,7 +59,7 @@ class ExcelUtil:
         sheet = wb.ActiveSheet
         try:
             paper_prices: dict = self.portfolio.get_papers_prices_in_rub().get('RUB')
-            currencies = self.portfolio.get_portfolio_currencies()
+            currencies = self.portfolio.get_portfolio_currencies_in_rub()
             paper_prices = {**paper_prices, **currencies}
         except AttributeError:
             raise AttributeError("Cannot update papers statistics 'cause cannot receive papers price")

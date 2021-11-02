@@ -35,6 +35,14 @@ class PortfolioUtil:
             sorted_currencies[i.currency.value] = i.balance
         return sorted_currencies
 
+    def get_portfolio_currencies_in_rub(self) -> dict:
+        currencies = self.get_portfolio_currencies()
+        currencies_in_rub = {name: value*self.get_currency_course(name)
+                             for name, value in currencies.items() if name != 'RUB'}
+        if currencies.get('RUB'):
+            currencies_in_rub['RUB'] = currencies.get('RUB')
+        return currencies_in_rub
+
     def get_papers_prices(self) -> dict:
         paper_prices = dict(RUB=dict(), USD=dict(), EURO=dict())
         for name, lots_quantity, currency in self.__get_portfolio_papers():
@@ -52,10 +60,11 @@ class PortfolioUtil:
             paper_prices[currency] = dict()
             for name, price in tmp_papers.items():
                 paper_prices['RUB'][name] = price * self.get_currency_course(currency)
+        paper_prices = self.exclude_incorrect_papers(paper_prices)
         return paper_prices
 
     def __get_portfolio_papers(self) -> list:
-        return [(i.ticker, i.lots, i.average_position_price.currency.value) for i in self.portfolio]
+        return [(i.ticker, i.balance, i.average_position_price.currency.value) for i in self.portfolio]
 
     def __get_paper_price(self, ticker, lots_quantity) -> decimal.Decimal:
         figi = self.client.get_market_search_by_ticker(ticker).payload.instruments[0].figi
@@ -63,3 +72,8 @@ class PortfolioUtil:
         if not last_price:
             raise Exception(f"Received incorrect paper price. Received: {last_price}")
         return last_price * lots_quantity
+
+    def exclude_incorrect_papers(self, papers: dict) -> dict:
+        exception_papers = ('USD000UTSTOM', )
+        papers['RUB'] = {k: v for k, v in papers['RUB'].items() if k not in exception_papers}
+        return papers
