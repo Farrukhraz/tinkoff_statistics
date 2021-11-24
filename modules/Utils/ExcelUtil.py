@@ -65,6 +65,7 @@ class ExcelUtil:
             raise AttributeError("Cannot update papers statistics 'cause cannot receive papers price")
         # for r in sheet.Range(f"A{self.papers_range[0]}:A{self.papers_range[1]}"):
         i = 0
+        print('Editing excel file')
         for i in self.papers_range:
             paper_name = sheet.Cells(i, 1).value
             if not paper_name:
@@ -73,6 +74,7 @@ class ExcelUtil:
             if paper_price is not None:
                 sheet.Cells(i, 2).value = round(paper_price)
                 del paper_prices[paper_name]
+            print('.', end='')
         for name, price in paper_prices.items():
             sheet.Cells(i, 1).value = name
             sheet.Cells(i, 2).value = round(price)

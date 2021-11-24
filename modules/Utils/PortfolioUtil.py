@@ -45,11 +45,14 @@ class PortfolioUtil:
 
     def get_papers_prices(self) -> dict:
         paper_prices = dict(RUB=dict(), USD=dict(), EURO=dict())
+        print('Getting paper prices')
         for name, lots_quantity, currency in self.__get_portfolio_papers():
             paper_price = self.__get_paper_price(name, lots_quantity)
             if paper_price == 0:
                 continue
             paper_prices[currency][name] = paper_price
+            print('.', end='')
+        print('')
         return paper_prices
 
     def get_papers_prices_in_rub(self) -> dict:
@@ -60,6 +63,7 @@ class PortfolioUtil:
             paper_prices[currency] = dict()
             for name, price in tmp_papers.items():
                 paper_prices['RUB'][name] = price * self.get_currency_course(currency)
+        print('')
         paper_prices = self.exclude_incorrect_papers(paper_prices)
         return paper_prices
 
